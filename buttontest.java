@@ -20,7 +20,7 @@ public class MainActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		RadioGroup sex=(RadioGroup)findViewById(R.id.radioGroup1);
+		final RadioGroup sex=(RadioGroup)findViewById(R.id.radioGroup1);
 		sex.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			
 			public void onCheckedChanged(RadioGroup group,int checkedId){
@@ -35,9 +35,14 @@ public class MainActivity extends ActionBarActivity {
 		
 		Button submitBtn=(Button)findViewById(R.id.submit);
 		submitBtn.setOnClickListener(new OnClickListener(){
-			
 			public void onClick(View v){
-				Toast.makeText(MainActivity.this,"sssa",Toast.LENGTH_SHORT).show();
+				for(int i=0;i<sex.getChildCount();i++){
+					RadioButton r=(RadioButton)sex.getChildAt(i);
+					/*if(r.isChecked()){
+						Toast.makeText(MainActivity.this,r.getText().toString(),Toast.LENGTH_SHORT).show();
+						break;
+					}*/
+				}
 			}
 		});
 		
