@@ -4,8 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -15,13 +19,20 @@ public class MainActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_main);
 		
 		final ListView listview=(ListView)findViewById(R.id.listView1);
-		listview.addHeaderView(line());
+		//listview.addHeaderView(line());
 		
 		ArrayAdapter<CharSequence> adapter=ArrayAdapter.createFromResource(MainActivity.this,
 				R.array.ctype,android.R.layout.simple_list_item_checked);
 		
 		listview.setAdapter(adapter);
-		listview.addFooterView(line());
+		//listview.addFooterView(line());
+		
+		listview.setOnItemClickListener(new OnItemClickListener(){
+			public void onItemClick(AdapterView<?> parent,View arg1,int pos,long id){
+				String result=parent.getItemAtPosition(pos).toString();
+				Toast.makeText(MainActivity.this,result,Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 
 	@Override
