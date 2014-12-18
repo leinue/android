@@ -1,0 +1,15 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF">
+
+    <ImageView 
+        android:id="@+id/borderImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img01"
+        android:padding="2dp"
+        android:layout_margin="10dp"
+        android:background="#FFF"/>
+
+</RelativeLayout>
