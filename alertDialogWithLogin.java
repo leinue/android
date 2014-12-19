@@ -2,6 +2,8 @@ package com.example.alertdialoglogin;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -25,7 +27,11 @@ public class MainActivity extends ActionBarActivity {
 		View view=inflater.inflate(R.layout.login,null);
 		login.setView(view);
 		login.setPositiveButton("submit to login in",null);
-		login.setNegativeButton("exist",null);
+		login.setNegativeButton("exist",new OnClickListener(){
+			public void onClick(DialogInterface dialog,int which){
+				finish();
+			}
+		});
 		login.create().show();
 	}
 
