@@ -34,6 +34,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item){
     	Toast.makeText(this,item.getTitle(),Toast.LENGTH_SHORT).show();
+    	if(item.getGroupId()==R.id.setting){
+    		if(item.isChecked()){
+    			item.setChecked(false);
+    		}else{
+    			item.setChecked(true);
+    		}
+    	}
     	return super.onContextItemSelected(item);
     }
 
