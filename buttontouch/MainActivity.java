@@ -18,6 +18,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        Toast.makeText(MainActivity.this,getResources().getString(R.string.app_name),Toast.LENGTH_LONG).show();
+        
         Button btn=(Button)findViewById(R.id.button1);
         btn.setOnClickListener(new OnClickListener(){
 
