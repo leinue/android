@@ -25,7 +25,9 @@ public class MainActivity extends ActionBarActivity implements Runnable{
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
+				i=0;
 				thread=new Thread(MainActivity.this);
+				thread.start();
 			}
 			
 		});
@@ -48,7 +50,6 @@ public class MainActivity extends ActionBarActivity implements Runnable{
 	@Override
 	public void run() {
 		// TODO 自动生成的方法存根
-		int i = 0;
 		while(!Thread.currentThread().isInterrupted()){
 			i++;
 			Log.i("counter",String.valueOf(i));
