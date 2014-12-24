@@ -123,4 +123,17 @@ public class InaccountDAO {
 		}
 		return 0;
 	}
+	
+	/*
+	 * 获取收入最大编号 
+	 * @return
+	 */
+	public int getMaxId(){
+		db=helper.getWritableDatabase();
+		Cursor cursor = db.rawQuery("select max(_id) from tb_inaccount", null);// 获取收入信息表中的最大编号
+		while(cursor.moveToLast()){
+			return cursor.getInt(0);
+		}
+		return 0;
+	}
 }
