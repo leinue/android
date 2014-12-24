@@ -1,5 +1,6 @@
 package com.example.accountsoft;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -7,6 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -21,6 +24,26 @@ public class MainActivity extends ActionBarActivity {
 				finish();
 			}
 		});
+		
+		EditText txtlogin=(EditText)findViewById(R.id.editText1);
+		Button btnLogin=(Button)findViewById(R.id.button1);
+		btnLogin.setOnClickListener(new OnClickListener(){
+			public void onClick(View v){
+				Intent intent=new Intent(login.this,MainActivity.class);
+				PwdDAO pwdDAO=new PwdDAO(login.this);
+				if((pwdDAO.getCount()==0 | pwdDAO.find().getPassword().isEmpty()) && txtlogin.getText().toString()){
+					startActivity(intent);
+				}else{
+					if((pwdDAO.find().getPassword().equals(txtlogin.getText().toString()))){
+						startActivity(intent);
+					}else{
+						Toast.makeText(Login.this, "请输入正确的密码", Toast.LENGTH_SHORT).show();
+					}
+				}
+			}
+		});
+		
+		
 	}
 
 	@Override
