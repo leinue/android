@@ -1,0 +1,200 @@
+Android Development
+用户界面设计
+选项卡TabHost P130
+选项卡主要由TabhHost,TabWidget和FrameLayout组成.在声明XML文件时必须为每一个组件指定id.
+选项卡的内容也是通过XML控制,比如新建一个tab1.xml即可使用.
+在代码中控制TabHost:
+//获得tabhost
+TabHost tabhost=(TabHost)findViewById(R.id.tabhost);
+//初始化组件
+tabhost.setup();
+LayoutInflater inflater=LayoutInflater.from(this);
+//动态载入XML
+Inflater.inflate(R.layout.tab1,tabHost.getTabContentView());
+Inflater.inflate(R.layout.tab2,tabHost.getTabContentView());
+//添加一个标签页,先设置tabSpec,然后设置tab名称,最后设置tab内容
+tabHost.add(tabHost.newTabSpec(“tab01”)
+.setIndicator(“one”)
+.setContent(R.id.LinearLayout1));
+tabHost.add(tabHost.newTabSpec(“tab02”)
+.setIndicator(“two”)
+.setContent(R.id.LinearLayout2));
+补充,LayoutInflater作用:
+1.对于一个没有被载入或者需要动态载入的页面都需要用inflater.
+2.对于一个已经载入的activity,可以使用findViewById来寻找界面元素
+inflate 方法
+public View inflate (int resource, ViewGroup root)?
+public View inflate (XmlPullParser parser, ViewGroup root)
+public View inflate (XmlPullParser parser, ViewGroup root, boolean attachToRoot) ?
+public View inflate (int resource, ViewGroup root, boolean attachToRoot)
+TIPS 1 善于使用Adapter与(GridView,ListView,ImageView)等进行关联.同时注意使用ArrayList和HashMap存储数据.
+在标题上显示进度条 P141
+requestWindowFeature(Window.FEATURE_PROGRESS);//显示水平进度条
+再创建继承自AsyncTask的异步类,并重写
+onPreExecute() //让进度条可见
+doInBackground() //要执行的耗时任务
+onProgressUpdate() //动态更新最近进度
+onPostExecute() //任务执行后
+//执行前让进度条可见
+setProgressVisibility(true);
+//动态更新最新进度
+SetProgress(_progressNum);
+最后需要使用execute执行Task,假如继承之后的类名为myTask,则执行代码为:
+New myTask().Execute();
+使用Notification P147
+1.调用getSystemSerice()取得系统的NotificationManager服务
+2.创建一个notification对象,并为其设置各种属性
+3.为Notification对象设置事件信息
+4.通过NotificationManager类的notify()对象发送Notication通知
+获得NotificationManager服务的方法如下:
+NotificationManager nm=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+删除通知:
+nm.cancel(id);
+nm.cancelAll();
+使用AlertDialog P150
+一般使用AlertDialog.builder类,它能够实现更多对话框类型.
+builder类可以通过new AlertDialog.builder().create()创建
+也可以通过new AlertDialog.builder()创建
+在使用前者时最后可以直接使用.show()方法显示对话框
+在使用后者时需要使用.create().show()显示对话框
+当直接使用builder的时候(后者)可以使用setPositiveButton之类的方法,使用Alert(前者)则需要使用setButton()方法设置对话框类型.
+使用Bundle在Activity之间交换数据 P175
+将要保存的数据放到bundle中,然后通过intent提供的putExtras方法将要懈怠的数据保存到intent中.
+发送数据
+Intent intent=new Intent(CurrentClass.this,targetClass.class);
+Bundle bundle=new Bundle();
+bundle.putXXX(key,value);
+intent.putExtras(bundle);
+startActivity(intent);
+接收数据:
+Intent intent=getIntent();
+Bundle bundle=getExtras();
+bundle.getXXX(key);
+调用另一个Activity并返回结果(比如,上一步功能) P178
+使用startActivityForResult()方法,并设置一个请求码用来鉴定来源.
+Fragment P185
+用来在Activity中描述一些行为或一部分用户界面,运行时和activity同步.
+在布局中添加fragment:
+直接使用<fragment></fragment>标签
+注意fragment的name属性要用com.packname.NAME注明
+在Activity运行时添加fragment:
+获取一个fragmentTransaction的实例,然后使用add()方法添加一个fragment,add()方法的第一个参数是fragment要放入的viewGroup(由R.Resource指定).第二个参数是要参加的fragment,为了最后使改变生效还要调用commit()方法提交事务.
+//实例化DetailFragment对象
+DetailFragment details=new DetailFragment();
+FragmentTransaction ft=getFragmentManager().beginTrancation();
+Ft.add(android.R.id.content,details).commit();
+Android应用核心Intent P200
+Intent包含名称,动作,数据,种类,额外和标记等内容.
+组件名称(Component Name):
+可以使用setComponent(),setClass()或setClassName设置,使用getComponent()读取.
+动作(Action):
+Action是一个字符串,它用来表示将要执行的动作.在Intent类中,定义了一系列动作常量,气目标组件包括Activity和Broadcast两类.
+1.标准Activity动作
+a)参考API文档中Intent类的说明
+b)使用动作时,需要讲起转换为对应的字符串信息.如ACTION_MAIN应该转换为android.intent.action.MAIN
+2.标准广播动作
+a) 参考API文档中Intent类的说明
+b)使用动作时,需要讲起转换为对应的字符串信息.如ACTION_TIME_TICK应该转换为android.intent.action.TIME_TICK
+Intent对象中的动作使用setAction()设置,使用getAction()方法读取.
+数据(Data):
+Data表示操作数据的URI和MIME类型,不同动作与不同类型的数据规范匹配.例如,如果动作是ACTION_EDIT,那么数据应该是包含用来编辑文档的URI;如果动作是ACTION_CALL,那么数据应该是包含呼叫好吗的tel:URI;如果动作时ACTION_VIEW,那么数据应该是包含网路访问的http:URI.
+种类(Category):
+参考API文档中Intent类的说明
+addCategory()方法将种类增加到Intent类中,removeCategory()方法删除上次增加的种类,getCategories()方法获得当前对象中包含的所有种类.
+额外(Extras):
+Extras是一组键值时,其中包含了应该传递给处理Intent的组件的额外信息.例如,动作为ACTION_TIMEZONE_CHANGED的Intent用time-zone额外来表示新时区.
+标记(Flags):
+Flags表示不同来源的标记,多数用语指示Android系统如何启动Activity(如Activity属于哪个Task)以及启动后如何对待(如它是否属于近期的Activity列表).所有的标记都定义在Activity类中.
+APPLICATIONS 1:利用Intent返回系统Home桌面
+Intent intent=new Intent(); //创建Intent对象
+intent.setAction(Intent.ACTION_MAIN); //设置动作
+intent.addCategory(Intent.CATEGORY_HOME); //设置种类
+startActivity(intent); //将Intent传递给Activity
+APPLICATIONS 2:利用Intent拨打电话
+Intent intent=new Intent();
+intent.setAction(Intent.ACTION_CALL);
+intent.setData(Uri.parse(“tel:”+number));
+starActivity(intent);
+还需要添加拨打电话的权限
+<uses-permission android:name=”android.permission.CALL_PHONE”/>
+APPLICATIONS 3:利用Intent打开网页
+Intent intent=new Intent();
+intent.setAction(Intent.ACTION_VIEW);
+intent.setData(Uri.parse(“http://baidu.com”));
+startActivity(intent);
+事件处理概述 P220
+处理键盘事件 P221
+Android中控件在处理物理按键事件时,提供的回调方法有onKeyUp(),onKeyDown和onKeyLongPress().
+Android设备可用物理按键及其触发事件表可参考P221
+APPLICATIONS 1:屏蔽后退键/提示音量增加事件
+重写onKeyDown()方法来拦截用户单击后退键事件
+返回true即可.在此之前要判断onKeyDown方法中的参数keyCode是否为后退键的键值.
+但是对于音量增加事件要返回false,因为不是屏蔽掉.
+按钮长按事件使用.setOnLongClickListener方法
+内部函数使用onLongClick()
+资源访问 P233
+定义字符串资源文件
+<resources>
+<string name=”introduce”>hhhh</string>
+</resources>
+使用字符串资源
+R.String.字符串名
+getResources().getString(R.String.introduce)
+在XML文件中使用字符串资源:@string/字符串名
+定义颜色值
+在Android中,颜色值通过RGB三原色和一个透明度(Alpha)表示,它必须以#开头,后面接Alpha-Red-Green-Blue形式的内容.其中Alpha可以被省略,如果被省略,表示颜色默认是完全不透明的.通常情况下,颜色值使用以下4种形式之一:
+#RGB,#ARGB,#RRGGBB,#AARRGGBB
+在表示透明度时,0表示完全透明,F表示完全不透明.
+定义颜色资源文件
+<resources>
+<color name=”introduce”>#FFFFFFF</color>
+</resources>
+使用颜色资源
+R.color.颜色资源名
+getResources().getColor(R.color.introduce);
+在XML文件中使用颜色资源:@color/颜色资源名
+定义尺寸资源文件
+<resources>
+<dimen name=”introduce”>24px</dimen>
+<dimen name=”introduce”>14dp</dimen>
+</resources>
+使用尺寸资源
+R.dimen.尺寸资源名
+getResources().getDimension(R.dimen.introduce);
+在XML文件中使用尺寸资源:@dimen/尺寸资源名
+定义数组资源文件
+<resources>
+<string-array name=”introduce”>
+<item>A</item>
+<item>B</item>
+</string-array>
+</resources>
+使用数组资源
+R.array.数组名
+String[] arr=getResources().getStringArray(R.id.introduce);
+在XML文件中使用数组资源:@array/数组名
+在定义ListView时通过定义android:entries属性来指定项目列表
+使用图片资源
+R.drawable.文件名
+ImageView iv=(ImageView)findViewById(R.id.imageView1);
+iv.setImageResources(R.drawable.文件名);
+在XML文件中使用图片资源:@drawable/文件名	
+StateListDrawable资源 P245
+StateListDrawable资源是定义在XML文件中的drawable对象,能根据状态呈现不同的图像.例如一个button可以有不同的状态(pressed,enabled或focused),使用StateListDrawable资源可以为按钮的每个状态提供不同的按钮图片.
+StateListDrawable资源文件的根元素为<seclector></seclector>
+在该元素中可以包含多个<item></item>元素,每个item元素可以设置两个属性:
+1.Android:color或android:drawable,用于指定颜色或drawable资源
+2.android:state_xxx:用于指定一个状态.常用的状态属性表参考P245也的表8.1
+例如,创建一个编辑框,若获得焦点则改变其颜色的XML代码如下:
+此XML文件名称为edittext_focused.xml
+<selector>
+<item android:color=”#F60” android:state_focused=”true”/>
+<item android:color=”#0A0” android:state_focused=”false”/>
+</selector>
+要在EditText中使用状态信息可以使用以下代码:
+<EditText
+android:id=”@+id/edittext”
+Android:layout_height=”wrap_content”
+Android:layout_width=”wrap_content”
+Android:textColor=”@drawable/edittext_focused”
+Android:text=”please enter in”/>
