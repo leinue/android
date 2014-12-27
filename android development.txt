@@ -198,3 +198,253 @@ Android:layout_height=”wrap_content”
 Android:layout_width=”wrap_content”
 Android:textColor=”@drawable/edittext_focused”
 Android:text=”please enter in”/>
+使用样式资源
+<resoureces>
+<style name=”basic”>
+<item name=”android:textSize”>48px</item>
+<item name=”android:textColor”>#F60</item>
+</style>
+<style name=”title” parent=”basic”>
+<item name=”android:padding”>10px</item>
+<item name=”android:gravity”>center</item>
+</style>
+</resources>
+注意parent=”basic”,style资源是可以继承的
+使用主题资源 P250
+主题资源的设置和style资源一样,不同的是主题资源对整个Activity起作用,而style只对一个View起作用.
+原始XML资源 P252
+解析XML用XmlResourcesParser
+菜单资源 P254
+菜单资源放在res\menu目录下.菜单资源的根元素是<menu></menu>,它应包含<item></item>和<group></group>
+具体属性参考P254页的两个表格
+使用菜单资源
+重写onCreateOptionsMenu方法,在该方法中,首先创建一个用于解析菜单资源文件的MenuInflater对象,然后调用该对象的infalte方法解析一个菜单资源,并把据诶诶后的菜单保存在menu中
+MenuInflater inflater=new MenuInflater(this);
+Infalter.inflate(R.menu.optionmenu,menu);
+//menu为onCreateOptionsMenu方法的参数
+重写onOptionItemSeclected方法用语当菜单项被选择时作出相应处理
+item.getTitle();即可获得被点击的菜单项.
+其中item为onOptionItemSeclected方法的参数
+上下文菜单:
+当用户长时间按键不放时,弹出的菜单就是上下文菜单
+1.在Activity中的onCreate()方法注册上下文菜单
+registerForContent(tv); //tv是一个被注册的控件
+2.重写onCreateContextMenu方法,在该方法中首先创建一个MenuInflater对象,然后调用该对象的inflate方法解析一个菜单资源文件,并把解析后的菜单保存在menu中.
+MenuInflater inflater=new MenuInflater(this);
+Infalter.inflate(R.menu.optionmenu,menu);
+//menu为onCreateContextMenu方法的参数
+menu.setHeaderIcon(R.id.ic_launcher);
+menu.setHeaderTitle(“title”);
+3.重写onContextItemSeclected方法,用语菜单项被选择时做出相应处理
+item.getTitle();即可获得被点击的菜单项.
+其中item为onOptionItemSeclected方法的参数
+TIPS 2 如果想为菜单创建子菜单可以在item中另加一个menu标签,但此时子menu中的item标签要被group包围,具体见P258
+Group和item的属性要多看看,尽量记住,挺有用.
+国际化Android程序 P260
+在res目录下创建对应于各个语言的文件夹
+简体中文:values-zh-rCN
+繁体中文:values-zh-rTW
+美式英文:values-em-rUS
+然后在每一个文件夹创建相应的strings.xml,并在该文件中定义对应于言的字符串即可.
+高级编程设计
+多媒体应用开发 P318
+使用MediaPlayer播放音频
+创建MediaPlayer对象,并装载音频文件.MediaPlayer的静态方法create()常用的语法格式有两种:
+1.create(Context context,int resid);
+2.Create(Context context,Uri uri);
+如果需要单独指定要装载的资源,这可以使用MediaPlayer类的setDataSource方法实现.但在使用它之后MediaPlayer并未真正装载该音频文件,还需要调用mediaPlayer的prepare方法去真正装载音频文件
+MediaPlayer player=new MediaPlayer();
+player.setDataSource(“src”);
+Player.prepare();
+Player.start(); //播放
+Player.stop(); //停止
+Player.pause(); //暂停
+使用SoundPool播放音频
+SoundPool即音频池,可以同时播放多个短小的音频,而且占用的资源较少.
+1.创建SoundPool对象
+SoundPool(int maxStreams,int streamType,int srcQuality);
+参数maxSteams指定可以容纳多少音频
+参数streamType指定声音类型,可以用AudioManager类的常量指定
+参数srcQuality指定声音的品质,默认值为0
+SoundPool soundpool=new SoundPool(10,AudioManager.STREAM_SYSTEM,0);
+2.加载所要播放的音频
+Public int load(Context context,int resId,int priority);
+Public int load(String path,int priority);
+还有两个详情见书P323
+Soundpool.load(this,R.raw.ding,1);
+为了更好的管理所加载的音频,一般使用HashMap<Integer,Integer>
+HashMap<Integer,Integer>soundmap=new HashMap<Integer,Integer>();
+Soundmap.put(1,soundpool.load(this,R.id.raw.ding,1));
+3.播放音频
+Play(int soundID,float leftVolume,float rightVolume,int priority,int loop,float rate);
+参数soundID用于指定要播放的音频,该音频是通过load方法返回的
+参数LeftVolume指定左声道音量,取值为0.0-1.0
+参数RightVolume指定右声道音量,取值为0.0-1.0
+参数priority指定播放音频的优先级,数值越大,优先级越高
+参数loop指定循环次数,0为不循环,-1为循环
+参数rate用于指定速率,正常为1,最低为0.5,最高为2
+使用VideoView播放视频 P326
+<VideoView></VideoView>
+在布局文件中创建组件,然后在Activity中获取组件.使用setVideoPath()或者setVideoURI()加载要播放的视频,最后调用start()方法播放视频,此外还有stop()和pause()方法用于停止或暂停视频的播放.
+其它
+音量控制使用getSystemService中的AUDIO_SERVICE
+相机使用Camera类
+使用ContentProvider实现数据共享 P350
+ContentProvider介绍
+主要用来实现对数据的增删查改,需要调用getContentResolver方法获得contentProvider对象.
+数据模型
+每条记录包含一个数值型的_ID字段,用于在表格中唯一标识该记录.
+查询会返回一个cursor对象,它能遍历各行各列来读取各个字段的值,对于各个类型的数据,它都提供了专用的方法,因此为了读取字段的数据,开发人员必须知道当前字段的确切数据类型.
+URI的用法
+所有为provider提供的URI都以”content://”作为前缀.
+Android为当前平台提供的ContentProvider定义了CONTENT_URI常量,例如,匹配电话号码到联系人的URI和匹配保存联系人照片的URI分别如下:
+1.android.provider.Contacts.Phones.CONTENT_URI
+2.Android.provider.Contacts.Photos.CONTENT_URI
+CONTENT URI重要部分的总结:
+content://B/C/D
+B:URI的验证部分,用于表示该content provider,对于第三方应用,该部分应该是完整的类名来保证唯一性.
+C:content provider的路径部分,用于决定哪类数据被请求,如果content provider仅提供一种数据类型,可以省略该部分;如果provider提供几种类型,包括子类型,此部分可以由及部分组成.
+D:被请求的特定记录的ID值,这是被请求记录的_ID值,如果请求不仅限于单条记录,该部分及前面的斜线应该删掉.
+Android提供的content provider:
+Browser:读取或修改书签,浏览历史或网络搜索.
+CallLog:查看或更新通话历史.
+Contacts:读取,修改或保存联系人信息.
+LiveFolders:由content provider提供内容的特定文件夹.
+MediaStore:访问声音,视频和图片.
+Setting:查看和获取蓝牙设置,铃声和其他设备偏好.
+SyncStateContact:用语使用数据数组帐号关联数据的conentProvider余数,希望使用标准方式存储provider时可以使用.
+UserDictionary:在可预测文本输入时,提供用语定义单词给输入法使用.应用程序和输入法能增加数据到该字典.单词能关联频率信息和本地化信息.
+查询数据 P352
+要查询contentProvider中的数据,需要以下3个信息:
+1.标识该content provider的URI
+2.需要查询的数据字段名称
+3.字段中数据的类型
+如果要查询特定记录,还需要提供该记录的ID值.
+使用ContentResolver.query()或Activity.managedQuery()方法查询数据
+它们使用相同的参数,都返回cursor
+第一个参数为provider的URI,即CONTENT_URI常量.
+其它参数参考 P352
+增加记录
+使用contentResolver.insert()方法并传递给它provider的URI参数和contentValues映射.它返回新纪录的完整URI.
+增加新值
+见书P353
+批量更新记录
+ContentResolver.update();
+删除记录
+删除单条记录:ContentProvider.delete(),传入特定的URI
+删除多条记录:ContentProvider.delete(),传入删除记录类型的URI(如android.provider.Contacts.People.CONTENT_URI)和一个SQL WHERE语句.
+实例见书P354
+线程与消息处理
+通过Thread类的构造方法创建线程
+Thread(Runnable runnable); //需要通过重写run方法来实现
+Thread thread=new Thread(Runnable runnable){
+@Override
+Public void run(){} //要执行的操作
+}
+通过实现Runnable接口创建线程
+Public class ClassName extends Object implements Runnable
+需要实现run()方法
+开启线程
+Thread.start();
+休眠线程
+Thread.sleep(1000);
+中断线程
+Thread.interrupt();
+如果中断了线程还需要使用一个标记变量isInterrupted
+并且在run方法中加入一个判断
+Private boolean isInterrupted=false;
+...
+Public void run(){
+While(isInterrupted){...}
+}
+Handler消息传递机制 P371
+主要用来实现在新创建的线程中操作UI界面
+循环者(LOOPER)简介:
+在Android中,一个线程对应一个Looper对象,而一个Looper对象又对应一个MessageQueue,它用来存放message,存放的消息按照先进先出原则执行.
+不能使用构造方法创建Handler对象,正确的步骤如下:
+1.使用Looper类的prepare()方法初始化一个looper对象
+2.创建该handler对象
+3.使用looper类的loop方法启动looper,从消息队列中获取和处理消息
+Public class LooperThread extends Thread{
+Public Handler handler1; //声明一个handler对象
+@Override
+Public void run(){
+Super.run;
+Looper.prepare();  //初始化looper对象
+Handler1=new handler(){
+Public void handleMessage(Message msg){
+Log.i(“looper”,String.valueOf(msg.what));
+}
+};
+Message m=handler1.obtainMessage(); //获取一个消息
+m.what=0x11; //设置message的what属性
+Handler1.sendMessage(m); //发送消息
+Looper.loop();
+}
+}
+接下来在onCreate方法中创建一个LooperThread线程并启动
+LooperThread lh=new LooperThread();
+lh.start();
+Looper类提供的常用方法有:
+Prepare(),loop(),myLooper(),getThread(),quit();
+消息处理类(Handler)简介 P373
+1.将Message或runnable应用post或sendMessage方法发送到messageQueue中,在发送时可以指定延迟时间,发送时间以及要携带的bundle数据.当MessageQueue循环到该Message时调用相应的Handler对象的handlerMessage方法对其进行处理.
+2.在工作线程中与UI线程通信.
+在一个线程中只能有一个Looper和MessageQueue,但是可以有多个Handler,而且这些Hnadler可以共享同一个Looper和MessageQueue
+Handler类提供的常用方法详情看书P373
+消息类(Message)简介
+每个Message对象可以通过.obtain或Handler.obtainMessage获得.一个Message对象有5个属性:
+1.arg1 int 存放整型数据
+2.arg2 int 存放整型数据
+3.obj Object 存放发送给接收器的Object类型的任意对象
+4.replyTo Messager 指定此Message发送到何处的可选messager
+5.what int 指定用户自定义的消息代码
+使用Message类的属性可以携带int类型数据,如果要携带其他类型数据,可以用bundle对象,然后通过Message类的setData方法添加到Message中.
+Service应用
+倒数第三
+网络编程及Internet应用 P414
+使用HttpURLConnection访问网络
+该类是抽象类,不能直接实例化对象,需要用URL.openConnection方法创建.
+URL url=new URL(“http://baidu.com”);
+HttpURLConnection urlConnection=(HttpURLConnection)url.openConnection();
+但是这样还不能发送HTTP请求,仍需要进一步设置
+1.发送GET请求
+urlConnection.getInputStream();
+在应用GET方法传递中文参数时会产生乱码,这时可以用BASE64编码或者JAVA提供的URLEncoder类解决.
+2.发送POST请求
+urlConnection.setRequestMethod(“POST”);
+发送POST请求要麻烦一些,需要设置很多东西,详情见书P418
+使用HttpClient访问网络
+HttpURLConnection中的输入/输出流被统一封装成了HttpPost,HttpGet,HttpResponse
+1.发送GET请求
+a)创建HttpClient对象.
+b)创建HttpGet对象.
+c)调用HttpGet.setParams来设置参数或者直接把参数写进URL中.
+d)调用HttpClient对象的execute方法发送请求,执行该方法将返回一个HttpResponse对象.
+e)调用HttpResponse的getEntity()方法,可获得包含服务器响应内容的HttpEntity对象.
+Stringtarget=”http://baidu.com”;
+HttpClient httpclient=new DefaultHttpClient(target);
+HttpGet httprequest=new HttpGet(target);
+HttpResponse httpresponse;
+Httpresponse=httpclient.execute(httprequest);
+If(httpresponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK){
+Result=EntityUtils.toSting(httpresponse.getEntity());
+}else{ //失败}
+2.发送POST请求
+a)创建HttpClient对象.
+b)创建HttpPost对象.
+c)使用HttpPost.setParams()方法添加请求参数或者调用setEntity方法设置请求参数(使用ArrayList设置请求参数).
+d)调用HttpClient对象的execute方法发送请求,返回HttpResponse对象.
+e)调用HttpResponse对象的getEntity方法,可以获得服务器相应内容.
+Stringtarget=”http://baidu.com”;
+HttpClient httpclient=new DefaultHttpClient(target);
+HttpPost httprequest=new HttpPost(target);
+List<NameValuePair> params=new ArrayList<NameValuePair>();
+Params.add(new BasicNameValuePair(“param”,”post”));
+Params.add(new BasicNameValuePair(“fuck”,”shit”));
+httprequest.setEntity(new UrlEncodedFormEntity(params),”utf-8”);
+HttpResponse httpresponse;
+Httpresponse=httpclient.execute(httprequest);
+If(httpresponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK){
+Result=EntityUtils.toSting(httpresponse.getEntity());
+}else{ //失败}
