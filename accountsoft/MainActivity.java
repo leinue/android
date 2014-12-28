@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.accountsoft.dao.PwdDAO;
+
 public class MainActivity extends ActionBarActivity {
 
 	@Override
@@ -25,25 +27,24 @@ public class MainActivity extends ActionBarActivity {
 			}
 		});
 		
-		EditText txtlogin=(EditText)findViewById(R.id.editText1);
+		final EditText txtlogin=(EditText)findViewById(R.id.editText1);
 		Button btnLogin=(Button)findViewById(R.id.button1);
 		btnLogin.setOnClickListener(new OnClickListener(){
 			public void onClick(View v){
-				Intent intent=new Intent(login.this,MainActivity.class);
-				PwdDAO pwdDAO=new PwdDAO(login.this);
+				Intent intent=new Intent(MainActivity.this,MainMenu.class);
+				PwdDAO pwdDAO=new PwdDAO(MainActivity.this);
 				if((pwdDAO.getCount()==0 | pwdDAO.find().getPassword().isEmpty()) && txtlogin.getText().toString()){
 					startActivity(intent);
 				}else{
 					if((pwdDAO.find().getPassword().equals(txtlogin.getText().toString()))){
 						startActivity(intent);
 					}else{
-						Toast.makeText(Login.this, "请输入正确的密码", Toast.LENGTH_SHORT).show();
+						Toast.makeText(MainActivity.this, "请输入正确的密码", Toast.LENGTH_SHORT).show();
 					}
 				}
 			}
 		});
-		
-		
+		txtlogin.setText("");
 	}
 
 	@Override
