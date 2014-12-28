@@ -1,11 +1,11 @@
+
 Android Development
 用户界面设计
 选项卡TabHost P130
 选项卡主要由TabhHost,TabWidget和FrameLayout组成.在声明XML文件时必须为每一个组件指定id.
 选项卡的内容也是通过XML控制,比如新建一个tab1.xml即可使用.
 在代码中控制TabHost:
-//获得tabhost
-TabHost tabhost=(TabHost)findViewById(R.id.tabhost);
+TabHost tabhost=(TabHost)findViewById(R.id.tabhost); //获得tabhost
 //初始化组件
 tabhost.setup();
 LayoutInflater inflater=LayoutInflater.from(this);
@@ -35,10 +35,8 @@ onPreExecute() //让进度条可见
 doInBackground() //要执行的耗时任务
 onProgressUpdate() //动态更新最近进度
 onPostExecute() //任务执行后
-//执行前让进度条可见
-setProgressVisibility(true);
-//动态更新最新进度
-SetProgress(_progressNum);
+setProgressVisibility(true); //执行前让进度条可见
+SetProgress(_progressNum); //动态更新最新进度
 最后需要使用execute执行Task,假如继承之后的类名为myTask,则执行代码为:
 New myTask().Execute();
 使用Notification P147
@@ -400,8 +398,30 @@ Handler类提供的常用方法详情看书P373
 4.replyTo Messager 指定此Message发送到何处的可选messager
 5.what int 指定用户自定义的消息代码
 使用Message类的属性可以携带int类型数据,如果要携带其他类型数据,可以用bundle对象,然后通过Message类的setData方法添加到Message中.
-Service应用
-倒数第三
+Service应用 P384
+Service的分类
+可分为Started服务和Bound服务
+Started服务是由其它组件调用StartService启动的,这会调用onStartCommand方法.
+Bound服务是允许其它应用程序绑定并且与之交互的service类的实现类.为了提供绑定,必须实现onBind方法,该方法返回IBinder对象,定义了客户端用来与服务交互的程序接口.
+实现Started服务 P388
+1.继承IntentService类
+使用IntentService类是非常好的选择.
+实现onHandleIntent(Intent intent)方法和没有参数的构造方法
+当然还可以重写onCreate(),onStartCommand()和onDestory()
+2.继承Service类
+很复杂,见书P389
+可以从Activity或者其它应用程序组件通过传递Intent对象到startService方法启动服务,不能直接调用onStartCommand方法.
+Intent intent=new Intent(this,HelloService.class);
+startService(intent);
+停止服务必须使用stopSelf()停止自身,或者其它应用程序组件调用stopService()方法停止服务.Android系统不会停止或销毁服务.
+为确保精确,可以为stopSelf加一个int参数,启动请求的ID.
+实现Bound Service
+1.继承Binder类
+如果服务仅用于本地应用程序并且不需要跨进程工作,则开发人员可以实现自己的Binder类来为客户端提供访问服务公共方法的方式.这仅当客户端与服务位于同一个应用程序和进程时才有效.例如,音乐播放器需要绑定Activity在后台播放音乐.
+具体实现方法见书P397
+2.使用Messager类
+如果需要服务与远程进程通信,则可以使用Messager类来为服务提供接口.具体实现见书P399.
+Binder类和Messager类的Activity事件中都要重写onStart()和onStop()方法且用到serviceConnection.但是Messager要使用handler.
 网络编程及Internet应用 P414
 使用HttpURLConnection访问网络
 该类是抽象类,不能直接实例化对象,需要用URL.openConnection方法创建.
@@ -448,3 +468,30 @@ Httpresponse=httpclient.execute(httprequest);
 If(httpresponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK){
 Result=EntityUtils.toSting(httpresponse.getEntity());
 }else{ //失败}
+使用WebView P436
+使用标签<WebView>......</WebView>
+WebView常用方法参考P436
+如果想让WebView组件拥有方法或缩小网页的功能,可以使用:
+webview.getSettings().setSupportZoon(true);
+webview.getSettings().setBuiltInZoomControls(true);
+使用WebView加载HTML代码
+使用loadData()或loadDataWithBaseURL(),前者在使用带有中文的HTML代码时会产生乱码,后者不会.
+loadDataWithBaseURL(
+String baseUrl,String data,
+String mimeType,String encoding,
+String historyUrl);
+参数baseUrl,指定当前页使用的基本URL,如果为空白页则为null
+参数data,指定要显示的字符串数据
+参数mimeType,指定要显示内容的MIME类型,如果为null,则默认使用text/html
+参数encoding,指定数据编码方式
+参数historyUrl,指定当前页的历史URL,如果为null则使用about:blank
+TIPS 3 在构造长字符串时可以使用StringBuilder类,随后使用append方法.
+让WebView支持Javascript
+webview.getSetting().setJavaScriptEnabled(true);
+//使用这个方法后window.alert不可用,因此还要加一句
+webview.setWebChromeClient(new WebChromeClient);
+禁止使用内置浏览器访问网页
+webview.setWebViewClient(new WebViewClient());
+其它
+.goForWard(); //前进
+.goBack(); //后退
